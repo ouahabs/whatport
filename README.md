@@ -14,3 +14,5 @@ whatport [port(s)] (Seperate ports with a space)
 	- trojan filtering.
 	- Add port seperation with commas.
 
+## Side Notes
+This tool serves as training for my Golang skills, this is my first ever official open source Go package, so please feel free to open an issue or a pull request for features to be added and whatnot.
