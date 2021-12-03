@@ -21,8 +21,87 @@ THE SOFTWARE.
 */
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"github.com/anaskhan96/soup"
+	"os"
+	"log"
+	"strings"
+	"unicode"
+)
+
+type element struct {
+	port, protocol, service string
+	details string
+}
+
+func sanity(args []string) bool {
+	if len(os.Args[1:]) <= 0 {
+		return false;
+	} 
+	return true;
+}
+
+
+func tableHeader() {
+	th := "Port | Protocol | Service"
+	line := "=========================="
+	fmt.Println(th)
+	fmt.Println(line)
+}
+
+func usage() {
+	fmt.Println("Usage:\n  whatport [port(s)] \t (Seperate ports with a space)")
+	os.Exit(1)
+}
+func getArgs() []string {
+	return os.Args[1:]
+}
+
+func SpaceStringsBuilder(str string) string {
+    var b strings.Builder
+    b.Grow(len(str))
+    for _, ch := range str {
+        if !unicode.IsSpace(ch) {
+            b.WriteRune(ch)
+        }
+    }
+    return b.String()
+}
+
+func getData(ports []string) []element {
+	slices := make([]element, 0)
+	for _, port := range ports {
+		resp, err := soup.Get("https://www.speedguide.net/port.php?port=" + port)
+		if err != nil {
+			log.Fatalln(err)
+		}
+		html := soup.HTMLParse(resp)
+		grid := html.Find("table", "class", "port").FindAll("td")
+		
+		p := element{}
+		p.port = SpaceStringsBuilder(grid[0].Text())
+		p.protocol = SpaceStringsBuilder(grid[1].Text())
+		p.service = SpaceStringsBuilder(grid[2].Text())
+		slices = append(slices, p)
+	}
+	return slices
+}
+
+func prettify(l []element) {
+	for i := 0; i < len(l); i++ {
+		fmt.Printf("%s %s %s\n", l[i].port, l[i].protocol, l[i].service)
+	}
+}
 
 func main() {
-	fmt.Printf("hello world!\n")
+	if !sanity(getArgs()) {
+		usage()
+	} else {
+	tableHeader()
+	args := getArgs()
+	data := getData(args)
+	// fmt.Printf("%s %s %s\n", data[0], data[1], data[2])
+	prettify(data)
+	}
 }
