@@ -24,4 +24,4 @@ $ go build -o whatport
 
 
 ## Side Notes
-This tool serves as training for my Golang skills, this is my first ever official open source Go package, so please feel free to open an issue or a pull request for features to be added and whatnot.
+This tool serves as training for my Golang skills, this is my first ever official open source Go package, so please feel free to open an issue or a pull request for features to be added and whatnot. (Idea from elvi7major#5180 on Discord).
