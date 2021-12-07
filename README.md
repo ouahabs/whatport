@@ -18,6 +18,7 @@ $ go build -o whatport
 	* -d/--detailed, detailed output.
 	* -n, number of potential services per port.
 	* -c found CVEs
+	* --offline for offline mode (generates json data for offline use)
 * Play around with spf13/Cobra for cli commands.
 * trojan filtering.
 * Add port seperation with commas.
