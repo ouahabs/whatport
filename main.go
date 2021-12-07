@@ -30,9 +30,13 @@ import (
 	"unicode"
 )
 
+type service struct {
+	name string
+	details []string
+}
 type element struct {
-	port, protocol, service string
-	details string
+	port, protocol, source string
+	ser service // considering using an anonymous struct, but i don't want any spaghetti code.
 }
 
 func sanity(args []string) bool {
@@ -45,7 +49,7 @@ func sanity(args []string) bool {
 
 func tableHeader() {
 	th := "Port | Protocol | Service"
-	line := "=========================="
+	line := "========================="
 	fmt.Println(th)
 	fmt.Println(line)
 }
@@ -82,7 +86,7 @@ func getData(ports []string) []element {
 		p := element{}
 		p.port = SpaceStringsBuilder(grid[0].Text())
 		p.protocol = SpaceStringsBuilder(grid[1].Text())
-		p.service = SpaceStringsBuilder(grid[2].Text())
+		p.ser.name = SpaceStringsBuilder(grid[2].Text())
 		slices = append(slices, p)
 	}
 	return slices
@@ -90,7 +94,7 @@ func getData(ports []string) []element {
 
 func prettify(l []element) {
 	for i := 0; i < len(l); i++ {
-		fmt.Printf("%s %s %s\n", l[i].port, l[i].protocol, l[i].service)
+		fmt.Printf("%s %s %s\n", l[i].port, l[i].protocol, l[i].ser.name)
 	}
 }
 
