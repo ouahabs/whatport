@@ -34,8 +34,8 @@ type service struct {
 	name string
 	details []string
 }
-type element struct {
-	port, protocol, source string
+type port struct {
+	num, protocol, source string
 	ser service // considering using an anonymous struct, but i don't want any spaghetti code.
 }
 
@@ -73,18 +73,19 @@ func SpaceStringsBuilder(str string) string {
     return b.String()
 }
 
-func getData(ports []string) []element {
-	slices := make([]element, 0)
-	for _, port := range ports {
-		resp, err := soup.Get("https://www.speedguide.net/port.php?port=" + port)
+func getData(ports []string) []port {
+	slices := make([]port, 0)
+	for _, num := range ports {
+		resp, err := soup.Get("https://www.speedguide.net/port.php?port=" + num)
 		if err != nil {
 			log.Fatalln(err)
 		}
 		html := soup.HTMLParse(resp)
 		grid := html.Find("table", "class", "port").FindAll("td")
 		
-		p := element{}
-		p.port = SpaceStringsBuilder(grid[0].Text())
+
+		p := port{}
+		p.num = SpaceStringsBuilder(grid[0].Text())
 		p.protocol = SpaceStringsBuilder(grid[1].Text())
 		p.ser.name = SpaceStringsBuilder(grid[2].Text())
 		slices = append(slices, p)
@@ -92,9 +93,27 @@ func getData(ports []string) []element {
 	return slices
 }
 
-func prettify(l []element) {
+func scrapeJSON() {
+	/*
+		We want the json file to have this structure
+		{
+			"port":{
+				"number": {{ port_number }}
+				"protocol": {{ protocol }}
+				"service": {
+					"name": {{ service_name }}
+					"details": {{ details }}
+				}
+				"source": {{ source }}
+			}
+
+		}
+	*/
+}
+
+func prettify(l []port) {
 	for i := 0; i < len(l); i++ {
-		fmt.Printf("%s %s %s\n", l[i].port, l[i].protocol, l[i].ser.name)
+		fmt.Printf("%s %s %s\n", l[i].num, l[i].protocol, l[i].ser.name)
 	}
 }
 
